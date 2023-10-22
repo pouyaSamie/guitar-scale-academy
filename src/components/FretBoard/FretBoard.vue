@@ -49,6 +49,18 @@
         :y2="fretsShape?.y2"
         :stroke="StokeColor"
       />
+      <text
+        v-for="(fret, index) in fretsShape?.lines"
+        font-size="14"
+        :key="'fret_' + fret.nr"
+        :x="(fretpos(fret.nr - 1) + fretpos(fret.nr) - 20) / 2"
+        :y="fretsShape?.y1 - 45"
+        dominant-baseline="hanging"
+        fill="white"
+        font-weight="bold"
+      >
+        {{ index + 1 }}
+      </text>
 
       <!-- notes -->
       <g v-for="string in strings" :key="'ng_' + string.nr">
@@ -153,7 +165,7 @@ let { tuning, notes, root, scale, frets, notation } = props
 
 let hover_note = ref<number>(-1)
 let strings = ref<StringInfo[]>([])
-let fretsShape = ref<FretLine>()
+let fretsShape = ref<FretLine>({ y1: 0, y2: 0, lines: [] })
 let polys = ref<Poly[]>([])
 scale = { tonic: 'A', type: 'minor', notes: [], intervals: [] }
 let string_spacing: number = 42

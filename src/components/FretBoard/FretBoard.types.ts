@@ -36,3 +36,13 @@ export interface Scale {
   notes: string[]
   intervals: string[]
 }
+
+export interface TuningItems {
+  name: string
+  tuning: string
+}
+
+export interface InstrumentTuning {
+  instrument: string
+  tunings: TuningItems[]
+}

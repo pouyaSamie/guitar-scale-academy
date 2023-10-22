@@ -7,7 +7,7 @@ import NavigationDrawer from './components/ToolBar/NavigationDrawer.vue'
   <v-app id="inspire">
     <NavigationDrawer />
 
-    <v-main class="d-flex align-center justify-center" style="min-height: 300px">
+    <v-main class="d-flex justify-center" style="min-height: 300px">
       <RouterView />
     </v-main>
   </v-app>

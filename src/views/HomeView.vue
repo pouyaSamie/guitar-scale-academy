@@ -1,10 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row justify="center">
-      <v-col cols="12" sm="4">
-        <FretboardContainer />
-      </v-col>
-    </v-row>
+    <FretboardContainer />
   </v-container>
 </template>
 

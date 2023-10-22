@@ -1,22 +1,32 @@
 <template>
-  <v-container fluid>
-    <FretBoard
-      :tuning="tuning"
-      :notes="notes"
-      :notation="settings.notation"
-      :frets="settings.frets"
-      :root="root"
-      :scale="scale_info"
-    />
-  </v-container>
+  <v-row dense justify="center">
+    <v-col cols="11" lg="11" sm="11">
+      <FretBoardSettings :scale="ALL_SCALES" :tuning="Tunings[0].tunings" :tonics="Tonics" />
+    </v-col>
+  </v-row>
+  <v-row dense justify="center">
+    <v-col cols="12" lg="8" sm="12">
+      <FretBoard
+        :tuning="tuning"
+        :notes="notes"
+        :notation="settings.notation"
+        :frets="settings.frets"
+        :root="root"
+        :scale="scale_info"
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import FretBoard from './FretBoard.vue'
-import { Tunings } from './Tunings'
-import { Note, Scale, Midi, ScaleType, Mode } from 'tonal'
 import { ref } from 'vue'
+import type { InstrumentTuning } from './FretBoard.types'
+import FretBoard from './FretBoard.vue'
+import FretBoardSettings from '@/components/Forms/FretBoardSettings.vue'
+import { Tunings } from './Tunings'
+import { Tonics } from './Tonics'
+import { Note, Scale, Midi, ScaleType, Mode } from 'tonal'
 
 var ALL_SCALES: string[] = []
 for (var scale of ScaleType.all()) {
@@ -63,17 +73,8 @@ const scale_search = computed(() => {
   })
 })
 
-interface tuningItems {
-  name: string
-  tuning: string
-}
-interface tunings {
-  instrument: string
-  tunings: tuningItems[]
-}
-
 const tuning_search = computed(() => {
-  const newData: tunings[] = []
+  const newData: InstrumentTuning[] = []
   Tunings.forEach((element) => {
     const items = element?.tunings.filter(
       (item) => item.tuning.toLowerCase().indexOf(settings.value.usr_tuning.toLowerCase()) >= 0

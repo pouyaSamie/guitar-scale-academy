@@ -1,12 +1,8 @@
 <template>
-  <v-navigation-drawer scrim v-model="drawer">
-    <v-sheet elevation="10" class="py-4 px-1">
-      <v-divider inset></v-divider>
-    </v-sheet>
-  </v-navigation-drawer>
+  <v-navigation-drawer temporary v-model="drawer"> {{ drawer }} </v-navigation-drawer>
 
   <v-app-bar>
-    <v-app-bar-nav-icon @click="drawer = !drawer"> </v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click="updateDrawer"> </v-app-bar-nav-icon>
 
     <img src="@/assets/img/logo.png" width="100" height="46" class="ml-3" />
 
@@ -21,4 +17,8 @@
 import { ref } from 'vue'
 
 const drawer = ref(false)
+function updateDrawer() {
+  drawer.value = !drawer.value
+  console.log('updated', drawer.value)
+}
 </script>

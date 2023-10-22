@@ -5,18 +5,7 @@
     -->
 
     <g transform="translate(80, 50)">
-      <!-- Copyright
-      <text
-        font-size="11"
-        :x="width"
-        :y="height + 20"
-        fill="gray"
-        dominant-baseline="hanging"
-        text-anchor="end"
-      >
-        created with fretty.app
-      </text>
-      -->
+      :x="width" :y="height + 20"
 
       <!-- fret inlays -->
       <polygon
@@ -34,7 +23,7 @@
         :y1="string.y"
         :x2="width"
         :y2="string.y"
-        stroke="#ccc"
+        :stroke="StokeColor"
         stroke-width="1"
       />
 
@@ -44,7 +33,7 @@
         y1="0"
         x2="0"
         :y2="height"
-        stroke="#ccc"
+        :stroke="StokeColor"
         stroke-width="5"
         stroke-linecap="round"
       />
@@ -58,7 +47,7 @@
         :y1="fretsShape?.y1"
         :x2="fret.x"
         :y2="fretsShape?.y2"
-        stroke="#ccc"
+        :stroke="StokeColor"
       />
 
       <!-- notes -->
@@ -71,10 +60,10 @@
               <circle
                 :cx="note.x"
                 :cy="string.y"
-                r="10"
+                r="12"
                 stroke-width="1"
                 fill="#ccc"
-                stroke="#ccc"
+                :stroke="StokeColor"
               />
               <!-- name -->
               <text
@@ -84,6 +73,7 @@
                 dominant-baseline="central"
                 fill="black"
                 text-anchor="middle"
+                font-weight="bold"
               >
                 {{ note.name }}
               </text>
@@ -106,19 +96,19 @@
             <circle
               :cx="note.x"
               :cy="string.y"
-              r="10"
+              r="13"
               :stroke-dasharray="hover_note == note.num && note.num != root ? '4,4' : '0'"
-              :fill="root == note.num ? 'red' : 'white'"
-              stroke="black"
+              :fill="root == note.num ? 'red' : '#0165E7'"
+              stroke="#0165E7"
             />
             <!-- name -->
             <text
-              font-size="14"
+              font-size="18"
               :x="note.x"
               :y="string.y"
               dominant-baseline="central"
-              :fill="root == note.num ? 'white' : 'black'"
-              :font-weight="root == note.num ? 'bold' : 'normal'"
+              :fill="'white'"
+              font-weight="bold"
               text-anchor="middle"
             >
               {{ note.name }}
@@ -140,15 +130,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { Midi } from 'tonal'
-import type { StringInfo, FretLine, Poly, Note, Fret } from './FretBoard.types'
+import type { StringInfo, FretLine, Poly, Note } from './FretBoard.types'
 import { computed } from 'vue'
+import { createNote, fret_lines, fretpos, normalize, StokeColor, toname } from './FretBoard'
 
-onMounted(() => {
-  fretsShape.value = fret_lines()
-  polys.value = inlay_polys()
-  strings.value = getStrings()
-})
 const props = defineProps({
   tuning: {
     type: Array as () => number[],
@@ -163,19 +148,17 @@ const props = defineProps({
   root: { type: Number, default: () => -1 },
   scale: { type: Object, default: () => {} }
 })
+
 let { tuning, notes, root, scale, frets, notation } = props
 
 let hover_note = ref<number>(-1)
-// let root = ref<number>(-1)
 let strings = ref<StringInfo[]>([])
 let fretsShape = ref<FretLine>()
 let polys = ref<Poly[]>([])
-
-// let frets = 18
 scale = { tonic: 'A', type: 'minor', notes: [], intervals: [] }
 let string_spacing: number = 42
 let inlays = ref<number[]>([3, 5, 7, 9, 12, 15, 17, 19, 21])
-// let notation: String = 'Sharp'
+
 const width = computed(() => fretpos(frets - 1))
 const height = computed(() => {
   let tunningLength = 6
@@ -183,56 +166,37 @@ const height = computed(() => {
   return (tunningLength - 1) * string_spacing
 })
 
+onMounted(() => {
+  fretsShape.value = fret_lines(frets, height.value, width.value)
+  polys.value = inlay_polys()
+  strings.value = getStrings()
+})
+
 function getStrings(): StringInfo[] {
-  let result: StringInfo[] = []
-  tuning.forEach((tuning, string) => {
-    // find notes
-    let normalized_notes = normalize(notes)
-    let visible: Note[] = []
-    let hidden: Note[] = []
+  return tuning.map((tuning: number, string: number): StringInfo => {
+    const normalizedNotes: number[] = normalize(notes)
+    const visible: Note[] = []
+    const hidden: Note[] = []
+
     for (let fret = 0; fret < frets; fret++) {
-      let num = (tuning + fret) % 12
-      let note = {
-        num: num,
-        fret: fret,
-        name: toname(num),
-        x: (fretpos(fret - 1) + fretpos(fret)) / 2,
-        key: 'n' + string + '_' + fret
-      }
-      if (normalized_notes.includes(num)) {
+      const num: number = (tuning + fret) % 12
+      const note: Note = createNote(num, fret, string, notation, scale)
+
+      if (normalizedNotes.includes(num)) {
         visible.push(note)
       } else {
         hidden.push(note)
       }
     }
 
-    if (tuning != undefined) {
-      result.push({
-        nr: string,
-        y: string * string_spacing,
-        tuning: toname(tuning),
-        visible: visible,
-        hidden: hidden
-      })
+    return {
+      nr: string,
+      y: string * string_spacing,
+      tuning: toname(tuning, notation, scale),
+      visible,
+      hidden
     }
   })
-  return result
-}
-
-function fret_lines() {
-  let lines: Fret[] = []
-  for (let i = 1; i < frets; i++) {
-    lines.push({
-      nr: i,
-      x: fretpos(i)
-    })
-  }
-
-  return {
-    y1: height.value == 0 ? -string_spacing / 4 : 0,
-    y2: height.value == 0 ? string_spacing / 4 : height.value,
-    lines: lines
-  } as FretLine
 }
 
 function inlay_polys(): Poly[] {
@@ -286,36 +250,6 @@ function inlay_polys(): Poly[] {
     })
   }
   return result
-}
-function fretpos(n: number): number {
-  // https://www.liutaiomottola.com/formulae/fret.htm
-  if (n <= 20) {
-    const s = 1300
-    let d = s - s / Math.pow(2, n / 12)
-    return Math.round(d * 1000) / 1000
-  } else {
-    let p19 = fretpos(19)
-    let p20 = fretpos(20)
-    return p20 + (p20 - p19) * (n - 20)
-  }
-}
-function toname(x: number) {
-  let sharp = notation != 'flat'
-  let name = Midi.midiToNoteName(x, {
-    sharps: sharp,
-    pitchClass: true
-  })
-
-  if (notation != 'Intervals') return name
-
-  var index = scale.notes.indexOf(name)
-  if (index == -1) return name
-
-  return scale.intervals[index]
-}
-
-function normalize(notes: number[]): number[] {
-  return notes.map((x) => x % 12)
 }
 </script>
 

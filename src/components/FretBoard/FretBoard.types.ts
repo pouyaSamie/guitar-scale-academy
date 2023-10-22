@@ -3,6 +3,7 @@ export interface Note {
   x: number
   name: string
   key: string
+  fret: number
 }
 
 export interface StringInfo {

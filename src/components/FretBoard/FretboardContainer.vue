@@ -32,15 +32,14 @@ import FretBoardSettings from '@/components/Forms/FretBoardSettings.vue'
 import { Tunings } from './Tunings'
 import { Tonics } from './Tonics'
 import { Note, ScaleType } from 'tonal'
-import { type FretBoardSetting, type ScaleDefinition } from './FretBoard.types'
+import { type FretBoardSetting, type ScaleInfoDefinition, type ScaleNames } from './FretBoard.types'
 
-var ALL_SCALES: string[] = []
+var ALL_SCALES: ScaleNames[] = []
 for (var scaleType of ScaleType.all()) {
-  ALL_SCALES.push(scaleType.name)
-  ALL_SCALES.push(...scaleType.aliases)
+  ALL_SCALES.push({ name: scaleType.name, aliases: scaleType.aliases })
 }
 
-const scaleInfo = ref<ScaleDefinition>({ tonic: 'C', type: 'major' })
+const scaleInfo = ref<ScaleInfoDefinition>({ tonic: 'C', type: 'major' })
 const settings = ref<FretBoardSetting>({
   notation: 'sharps',
   frets: 18,
@@ -54,11 +53,12 @@ const tuning = computed(() => {
   return tune as number[]
 })
 
-function ScaleChanged(scale: ScaleDefinition): void {
+function ScaleChanged(scale: ScaleInfoDefinition): void {
+  console.log(scale)
   scaleInfo.value = scale
 }
 
-function TonicChanged(scale: ScaleDefinition): void {
+function TonicChanged(scale: ScaleInfoDefinition): void {
   scaleInfo.value = scale
 }
 

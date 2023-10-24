@@ -1,7 +1,9 @@
 // SCALES
 // Format: ["intervals", "name", "alias1", "alias2", ...]
-type ScaleDefinition = [string, ...string[]]
-const SCALES: ScaleDefinition [] = [
+
+import type { AllScaleDefinition } from './FretBoard.types'
+
+const SCALES: AllScaleDefinition[] = [
   // 5-note scales
   ['1P 2M 3M 5P 6M', 'major pentatonic', 'pentatonic'],
   ['1P 3M 4P 5P 7M', 'ionian pentatonic'],

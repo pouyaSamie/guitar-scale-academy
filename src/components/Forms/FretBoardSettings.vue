@@ -18,6 +18,10 @@
         v-model="userScale"
         auto-select-first
         :items="props.scale"
+        :item-title="
+          (item) => `${item.name}  ${item.aliases?.length > 0 ? '( ' + item.aliases[0] + ' )' : ''}`
+        "
+        item-value="name"
         color="blue-grey lighten-2"
         label="Scale"
         density="compact"
@@ -40,9 +44,9 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { ScaleDefinition, TuningItems } from '../FretBoard/FretBoard.types'
+import type { ScaleInfoDefinition, ScaleNames, TuningItems } from '../FretBoard/FretBoard.types'
+import type { PropType } from 'vue'
 
-let userScale = ref<string>('major')
 let userTuning = ref<string>('E A D G B E')
 let userTonic = ref<string>('C')
 const props = defineProps({
@@ -51,18 +55,21 @@ const props = defineProps({
   },
   notation: { type: String, default: () => 'Sharp' },
   frets: { type: Number, default: () => 12 },
-  scale: { type: Array<string>, default: () => {} },
+  scale: { type: Array as PropType<ScaleNames[]>, default: () => {} },
   tonics: { type: Array<string>, default: [] }
 })
 
+let userScale = ref<ScaleNames | string>({ name: 'major' } as ScaleNames)
+
 const emit = defineEmits<{
-  onUserScaleChange: [value: ScaleDefinition]
+  onUserScaleChange: [value: ScaleInfoDefinition]
   onUserTuningChange: [value: string]
-  onUserTonicChange: [value: ScaleDefinition]
+  onUserTonicChange: [value: ScaleInfoDefinition]
 }>()
 
 watch(userScale, (newValue) => {
-  emit('onUserScaleChange', { tonic: userTonic.value, type: newValue } as ScaleDefinition)
+  console.log(newValue)
+  emit('onUserScaleChange', { tonic: userTonic.value, type: newValue } as ScaleInfoDefinition)
 })
 
 watch(userTuning, (newValue) => {
@@ -70,6 +77,6 @@ watch(userTuning, (newValue) => {
 })
 
 watch(userTonic, (newValue) => {
-  emit('onUserTonicChange', { tonic: newValue, type: userScale.value } as ScaleDefinition)
+  emit('onUserTonicChange', { tonic: newValue, type: userScale.value } as ScaleInfoDefinition)
 })
 </script>

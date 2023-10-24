@@ -47,7 +47,7 @@ export interface InstrumentTuning {
   tunings: TuningItems[]
 }
 
-export interface ScaleDefinition {
+export interface ScaleInfoDefinition {
   tonic: string
   type: string
 }
@@ -57,4 +57,10 @@ export interface FretBoardSetting {
   frets: number
   ShowMusicSheet: string
   ShowChords: string
+}
+
+export type AllScaleDefinition = [string, ...string[]]
+export interface ScaleNames {
+  name: string
+  aliases: string[]
 }

@@ -1,5 +1,5 @@
-import { Midi } from "tonal"
-import type { Fret, FretLine, Note } from "./FretBoard.types"
+import { Midi } from 'tonal'
+import type { Fret, FretLine, NoteDefinition } from './FretBoard.types'
 
 export function fretpos(fretNumber: number): number {
   const baseScale = 1300
@@ -26,7 +26,7 @@ export function createNote(
   string: number,
   notation: string,
   scale: any
-): Note {
+): NoteDefinition {
   return {
     num,
     fret,
@@ -52,19 +52,19 @@ export function toname(x: number, notation: string, scale: any): string {
 }
 
 export function fret_lines(frets: number, height: number, string_spacing: number): FretLine {
-    const lines: Fret[] = []
-    for (let i = 1; i < frets; i++) {
-      lines.push({
-        nr: i,
-        x: fretpos(i)
-      })
-    }
-
-    return {
-      y1: height == 0 ? -string_spacing / 4 : 0,
-      y2: height == 0 ? string_spacing / 4 : height,
-      lines: lines
-    } as FretLine
+  const lines: Fret[] = []
+  for (let i = 1; i < frets; i++) {
+    lines.push({
+      nr: i,
+      x: fretpos(i)
+    })
   }
+
+  return {
+    y1: height == 0 ? -string_spacing / 4 : 0,
+    y2: height == 0 ? string_spacing / 4 : height,
+    lines: lines
+  } as FretLine
+}
 
 export const StokeColor: string = '#454545'

@@ -39,10 +39,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { TuningItems } from '../FretBoard/FretBoard.types'
+import { ref, watch } from 'vue'
+import type { ScaleDefinition, TuningItems } from '../FretBoard/FretBoard.types'
 
-let userScale = ref<string>('Major')
+let userScale = ref<string>('major')
 let userTuning = ref<string>('E A D G B E')
 let userTonic = ref<string>('C')
 const props = defineProps({
@@ -55,10 +55,21 @@ const props = defineProps({
   tonics: { type: Array<string>, default: [] }
 })
 
-// const setting = {
-//   autoUpdate: true,
-//   isUpdating: false,
-//   name: 'Midnight Crew',
-//   title: 'The summer breeze'
-// }
+const emit = defineEmits<{
+  onUserScaleChange: [value: ScaleDefinition]
+  onUserTuningChange: [value: string]
+  onUserTonicChange: [value: ScaleDefinition]
+}>()
+
+watch(userScale, (newValue) => {
+  emit('onUserScaleChange', { tonic: userTonic.value, type: newValue } as ScaleDefinition)
+})
+
+watch(userTuning, (newValue) => {
+  emit('onUserTuningChange', newValue)
+})
+
+watch(userTonic, (newValue) => {
+  emit('onUserTonicChange', { tonic: newValue, type: userScale.value } as ScaleDefinition)
+})
 </script>

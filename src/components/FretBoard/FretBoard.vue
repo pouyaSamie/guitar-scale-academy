@@ -141,42 +141,48 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import type { StringInfo, FretLine, Poly, Note } from './FretBoard.types'
+import { onMounted, ref, watch } from 'vue'
+import type { StringInfo, FretLine, Poly, NoteDefinition } from './FretBoard.types'
 import { computed } from 'vue'
 import { createNote, fret_lines, fretpos, normalize, StokeColor, toname } from './FretBoard'
+import { Note, Scale } from 'tonal'
 
 const props = defineProps({
   tuning: {
     type: Array as () => number[],
     default: () => [4, 11, 7, 2, 9, 4]
   },
-  notes: {
-    type: Array as () => number[],
-    default: () => []
-  },
   notation: { type: String, default: () => 'Sharp' },
   frets: { type: Number, default: () => 12 },
-  root: { type: Number, default: () => -1 },
-  scale: { type: Object, default: () => {} }
+  scaleType: { type: String, default: () => 'major' },
+  scaleTonic: { type: String, default: () => 'c' }
 })
 
-let { tuning, notes, root, scale, frets, notation } = props
+let { frets, notation } = props
 
 let hover_note = ref<number>(-1)
 let strings = ref<StringInfo[]>([])
 let fretsShape = ref<FretLine>({ y1: 0, y2: 0, lines: [] })
 let polys = ref<Poly[]>([])
-scale = { tonic: 'A', type: 'minor', notes: [], intervals: [] }
+let root = ref<number>(-1)
+
 let string_spacing: number = 42
 let inlays = ref<number[]>([3, 5, 7, 9, 12, 15, 17, 19, 21])
 
 const width = computed(() => fretpos(frets - 1))
 const height = computed(() => {
   let tunningLength = 6
-  if (tuning.length > 0) tunningLength = tuning.length
+  if (props.tuning.length > 0) tunningLength = props.tuning.length
   return (tunningLength - 1) * string_spacing
 })
+
+//  prettier-ignore
+watch(
+  [() => props.scaleType, () => props.scaleTonic,() => props.tuning],
+  () => {
+    strings.value = getStrings();
+  }
+);
 
 onMounted(() => {
   fretsShape.value = fret_lines(frets, height.value, width.value)
@@ -185,14 +191,17 @@ onMounted(() => {
 })
 
 function getStrings(): StringInfo[] {
-  return tuning.map((tuning: number, string: number): StringInfo => {
+  let scale = Scale.get(`${props.scaleTonic} ${props.scaleType}`)
+  root.value = Note.chroma(props.scaleTonic as string) as number
+  return props.tuning.map((tuning: number, string: number): StringInfo => {
+    let notes = scale.notes.map(Note.chroma) as number[]
     const normalizedNotes: number[] = normalize(notes)
-    const visible: Note[] = []
-    const hidden: Note[] = []
+    const visible: NoteDefinition[] = []
+    const hidden: NoteDefinition[] = []
 
     for (let fret = 0; fret < frets; fret++) {
       const num: number = (tuning + fret) % 12
-      const note: Note = createNote(num, fret, string, notation, scale)
+      const note: NoteDefinition = createNote(num, fret, string, notation, scale)
 
       if (normalizedNotes.includes(num)) {
         visible.push(note)
@@ -213,7 +222,7 @@ function getStrings(): StringInfo[] {
 
 function inlay_polys(): Poly[] {
   let result: Poly[] = []
-  if (!tuning.length) return result
+  if (!props.tuning.length) return result
   for (let fret of inlays.value) {
     if (fret >= frets) break
 

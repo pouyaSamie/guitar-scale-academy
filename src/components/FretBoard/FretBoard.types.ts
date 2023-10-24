@@ -1,4 +1,4 @@
-export interface Note {
+export interface NoteDefinition {
   num: number
   x: number
   name: string
@@ -10,8 +10,8 @@ export interface StringInfo {
   nr: number
   y: number
   tuning: string
-  hidden: Note[]
-  visible: Note[]
+  hidden: NoteDefinition[]
+  visible: NoteDefinition[]
 }
 
 export interface Fret {
@@ -45,4 +45,16 @@ export interface TuningItems {
 export interface InstrumentTuning {
   instrument: string
   tunings: TuningItems[]
+}
+
+export interface ScaleDefinition {
+  tonic: string
+  type: string
+}
+
+export interface FretBoardSetting {
+  notation: string
+  frets: number
+  ShowMusicSheet: string
+  ShowChords: string
 }

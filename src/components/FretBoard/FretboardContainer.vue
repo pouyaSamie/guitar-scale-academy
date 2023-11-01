@@ -1,6 +1,6 @@
 <template>
   <v-row dense justify="center">
-    <v-col cols="11" lg="11" sm="11">
+    <v-col cols="8">
       <FretBoardSettings
         @on-user-scale-change="ScaleChanged"
         @on-user-tonic-change="TonicChanged"
@@ -12,7 +12,7 @@
     </v-col>
   </v-row>
   <v-row dense justify="center">
-    <v-col cols="12" lg="8" sm="12">
+    <v-col cols="12" class="d-flex justify-center">
       <FretBoard
         :tuning="tuning"
         :notation="settings.notation"

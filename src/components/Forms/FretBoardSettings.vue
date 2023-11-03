@@ -28,7 +28,7 @@
       >
       </v-autocomplete>
     </v-col>
-    <v-col cols="3">
+    <v-col cols="2">
       <v-autocomplete
         v-model="userTonic"
         :items="props.tonics"
@@ -38,6 +38,29 @@
         density="compact"
       >
       </v-autocomplete>
+    </v-col>
+    <v-col cols="1">
+      <div class="text-center">
+        <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
+          <template v-slot:activator="{ props }">
+            <v-btn class="mt-2" color="rgb(1, 101, 231)" v-bind="props">
+              <v-icon color="white" size="large" icon="mdi-cog"></v-icon>
+            </v-btn>
+          </template>
+
+          <v-card min-width="300">
+            <v-list>
+              <v-list-item>
+                <v-switch color="purple" label="Enable messages"></v-switch>
+              </v-list-item>
+
+              <v-list-item>
+                <v-switch color="purple" label="Enable hints"></v-switch>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-menu>
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -49,6 +72,7 @@ import type { PropType } from 'vue'
 
 let userTuning = ref<string>('E A D G B E')
 let userTonic = ref<string>('C')
+let menu = ref<boolean>(false)
 const props = defineProps({
   tuning: {
     type: Array<TuningItems>

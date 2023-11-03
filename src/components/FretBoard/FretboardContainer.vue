@@ -18,7 +18,7 @@
         :notation="settings.notation"
         :frets="settings.frets"
         :scale-tonic="scaleInfo.tonic"
-        :scale-type="scaleInfo.type"
+        :scale-mode="scaleInfo.type"
       />
     </v-col>
   </v-row>
@@ -54,7 +54,6 @@ const tuning = computed(() => {
 })
 
 function ScaleChanged(scale: ScaleInfoDefinition): void {
-  console.log(scale)
   scaleInfo.value = scale
 }
 

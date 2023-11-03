@@ -141,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, type PropType } from 'vue'
 import type { StringInfo, FretLine, Poly, NoteDefinition } from './FretBoard.types'
 import { computed } from 'vue'
 import { createNote, fret_lines, fretpos, normalize, StokeColor, toname } from './FretBoard'
@@ -154,8 +154,8 @@ const props = defineProps({
   },
   notation: { type: String, default: () => 'Sharp' },
   frets: { type: Number, default: () => 12 },
-  scaleType: { type: String, default: () => 'major' },
-  scaleTonic: { type: String, default: () => 'c' }
+  scaleMode: { type: String as PropType<string>, default: () => 'major' },
+  scaleTonic: { type: String as PropType<string>, default: () => 'c' }
 })
 
 let { frets, notation } = props
@@ -178,7 +178,7 @@ const height = computed(() => {
 
 //  prettier-ignore
 watch(
-  [() => props.scaleType, () => props.scaleTonic,() => props.tuning],
+  [() => props.scaleMode, () => props.scaleTonic,() => props.tuning],
   () => {
     strings.value = getStrings();
   }
@@ -191,8 +191,11 @@ onMounted(() => {
 })
 
 function getStrings(): StringInfo[] {
-  let scale = Scale.get(`${props.scaleTonic} ${props.scaleType}`)
+  let scale = Scale.get(`${props.scaleTonic} ${props.scaleMode}`)
+  if (scale === undefined) return strings.value
+
   root.value = Note.chroma(props.scaleTonic as string) as number
+
   return props.tuning.map((tuning: number, string: number): StringInfo => {
     let notes = scale.notes.map(Note.chroma) as number[]
     const normalizedNotes: number[] = normalize(notes)

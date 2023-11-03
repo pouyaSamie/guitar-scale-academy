@@ -21,7 +21,7 @@
         :item-title="
           (item) => `${item.name}  ${item.aliases?.length > 0 ? '( ' + item.aliases[0] + ' )' : ''}`
         "
-        item-value="name"
+        :item-value="(item) => item"
         color="blue-grey lighten-2"
         label="Scale"
         density="compact"
@@ -59,7 +59,7 @@ const props = defineProps({
   tonics: { type: Array<string>, default: [] }
 })
 
-let userScale = ref<ScaleNames | string>({ name: 'major' } as ScaleNames)
+let userScale = ref<ScaleNames>({ name: 'major' } as ScaleNames)
 
 const emit = defineEmits<{
   onUserScaleChange: [value: ScaleInfoDefinition]
@@ -67,16 +67,15 @@ const emit = defineEmits<{
   onUserTonicChange: [value: ScaleInfoDefinition]
 }>()
 
-watch(userScale, (newValue) => {
-  console.log(newValue)
-  emit('onUserScaleChange', { tonic: userTonic.value, type: newValue } as ScaleInfoDefinition)
+watch(userScale, (newValue: ScaleNames) => {
+  emit('onUserScaleChange', { tonic: userTonic.value, type: newValue.name } as ScaleInfoDefinition)
 })
 
 watch(userTuning, (newValue) => {
   emit('onUserTuningChange', newValue)
 })
 
-watch(userTonic, (newValue) => {
-  emit('onUserTonicChange', { tonic: newValue, type: userScale.value } as ScaleInfoDefinition)
+watch(userTonic, (newValue: string) => {
+  emit('onUserTonicChange', { tonic: newValue, type: userScale.value.name } as ScaleInfoDefinition)
 })
 </script>

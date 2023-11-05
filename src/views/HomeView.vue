@@ -1,17 +1,12 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="11">
-        <FretboardContainer v-for="item in fretBoardItem" :key="item" />
-      </v-col>
-      <v-col class="d-flex justify-start" cols="1">
-        <v-icon
-          class="mt-3"
-          @click="AddFretBoard"
-          color="success"
-          size="large"
-          icon="mdi-plus-box"
-        ></v-icon>
+      <v-col cols="12">
+        <FretboardContainer
+          v-for="item in fretBoardItem"
+          :key="item"
+          @on-add-fret-board="AddFretBoard"
+        />
       </v-col>
     </v-row>
   </v-container>

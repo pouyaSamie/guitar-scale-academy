@@ -41,17 +41,36 @@
     </v-col>
     <v-col cols="1">
       <div class="text-center">
-        <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
+        <v-menu v-model="menu" :close-on-content-click="false" location="bottom center">
           <template v-slot:activator="{ props }">
             <v-btn class="mt-2" color="rgb(1, 101, 231)" v-bind="props">
               <v-icon color="white" size="large" icon="mdi-cog"></v-icon>
             </v-btn>
           </template>
 
-          <v-card min-width="300">
+          <v-card min-width="500">
             <v-list>
               <v-list-item>
-                <v-switch color="purple" label="Enable messages"></v-switch>
+                <!-- <v-slider v-model="FretSettings" :min="4" :max="24"></v-slider> -->
+                <v-slider
+                  v-model="FretSettings"
+                  :min="4"
+                  :max="24"
+                  label="Frets"
+                  hide-details
+                  :step="1"
+                  class="ma-4"
+                >
+                  <template v-slot:append>
+                    <v-text-field
+                      v-model="FretSettings"
+                      type="number"
+                      style="width: 80px"
+                      density="compact"
+                      hide-details
+                    ></v-text-field>
+                  </template>
+                </v-slider>
               </v-list-item>
 
               <v-list-item>
@@ -73,6 +92,8 @@ import type { PropType } from 'vue'
 let userTuning = ref<string>('E A D G B E')
 let userTonic = ref<string>('C')
 let menu = ref<boolean>(false)
+let FretSettings = ref<number>(12)
+
 const props = defineProps({
   tuning: {
     type: Array<TuningItems>

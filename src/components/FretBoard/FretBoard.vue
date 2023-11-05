@@ -212,7 +212,7 @@ function getStrings(): StringInfo[] {
         hidden.push(note)
       }
     }
-
+    
     return {
       nr: string,
       y: string * string_spacing,

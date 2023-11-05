@@ -1,5 +1,6 @@
 import { Midi } from 'tonal'
-import type { Fret, FretLine, NoteDefinition } from './FretBoard.types'
+import type { Scale } from "@tonaljs/scale";
+import type { Fret, FretLine, NoteDefinition, } from './FretBoard.types'
 
 export function fretpos(fretNumber: number): number {
   const baseScale = 1300
@@ -25,7 +26,7 @@ export function createNote(
   fret: number,
   string: number,
   notation: string,
-  scale: any
+  scale: Scale
 ): NoteDefinition {
   return {
     num,
@@ -36,7 +37,7 @@ export function createNote(
   }
 }
 
-export function toname(x: number, notation: string, scale: any): string {
+export function toname(x: number, notation: string, scale: Scale): string {
   const sharp = notation != 'flat'
   const name = Midi.midiToNoteName(x, {
     sharps: sharp,

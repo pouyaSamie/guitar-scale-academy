@@ -10,6 +10,15 @@
         :tonics="Tonics"
       />
     </v-col>
+    <!-- <v-col class="d-flex justify-start" cols="1">
+      <v-icon
+        class="mt-3"
+        @click="AddFretBoard"
+        color="success"
+        size="large"
+        icon="mdi-plus-box"
+      ></v-icon>
+    </v-col> -->
   </v-row>
   <v-row dense justify="center">
     <v-col cols="12" class="d-flex justify-center">
@@ -38,6 +47,11 @@ var ALL_SCALES: ScaleNames[] = []
 for (var scaleType of ScaleType.all()) {
   ALL_SCALES.push({ name: scaleType.name, aliases: scaleType.aliases })
 }
+// const emit = defineEmits<({e:'OnAddFretBoard':void)}>()
+
+const emit = defineEmits<{
+  (e: 'OnAddFretBoard'): void
+}>()
 
 const scaleInfo = ref<ScaleInfoDefinition>({ tonic: 'C', type: 'major' })
 const settings = ref<FretBoardSetting>({
@@ -64,6 +78,10 @@ function TonicChanged(scale: ScaleInfoDefinition): void {
 function TuningChanged(tuning: string): void {
   usrTuning.value = tuning
 }
+
+// function AddFretBoard() {
+//   emit('OnAddFretBoard')
+// }
 </script>
 
 <style scoped></style>

@@ -1,5 +1,3 @@
-import { Scale, Tonal } from "tonal"
-
 export interface NoteDefinition {
   num: number
   x: number
@@ -31,7 +29,6 @@ export interface FretLine {
   y2: number
   lines: Fret[]
 }
-
 
 export interface TuningItems {
   name: string

@@ -47,12 +47,6 @@ var ALL_SCALES: ScaleNames[] = []
 for (var scaleType of ScaleType.all()) {
   ALL_SCALES.push({ name: scaleType.name, aliases: scaleType.aliases })
 }
-// const emit = defineEmits<({e:'OnAddFretBoard':void)}>()
-
-const emit = defineEmits<{
-  (e: 'OnAddFretBoard'): void
-}>()
-
 const scaleInfo = ref<ScaleInfoDefinition>({ tonic: 'C', type: 'major' })
 const settings = ref<FretBoardSetting>({
   notation: 'sharps',
@@ -78,10 +72,6 @@ function TonicChanged(scale: ScaleInfoDefinition): void {
 function TuningChanged(tuning: string): void {
   usrTuning.value = tuning
 }
-
-// function AddFretBoard() {
-//   emit('OnAddFretBoard')
-// }
 </script>
 
 <style scoped></style>

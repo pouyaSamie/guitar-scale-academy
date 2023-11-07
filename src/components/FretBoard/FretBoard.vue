@@ -49,6 +49,7 @@
         :y2="fretsShape?.y2"
         :stroke="StokeColor"
       />
+
       <text
         v-for="(fret, index) in fretsShape?.lines"
         font-size="14"
@@ -141,7 +142,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, type PropType } from 'vue'
+import { onMounted, ref, watch, type PropType, reactive } from 'vue'
 import type { StringInfo, FretLine, Poly, NoteDefinition } from './FretBoard.types'
 import { computed } from 'vue'
 import { createNote, fret_lines, fretpos, normalize, StokeColor, toname } from './FretBoard'
@@ -162,7 +163,7 @@ let { frets, notation } = props
 
 let hover_note = ref<number>(-1)
 let strings = ref<StringInfo[]>([])
-let fretsShape = ref<FretLine>({ y1: 0, y2: 0, lines: [] })
+let fretsShape = reactive<FretLine>({ y1: 0, y2: 0, lines: [] })
 let polys = ref<Poly[]>([])
 let root = ref<number>(-1)
 
@@ -180,12 +181,18 @@ const height = computed(() => {
 watch(
   [() => props.scaleMode, () => props.scaleTonic,() => props.tuning],
   () => {
-    strings.value = getStrings();
+        strings.value = getStrings();
   }
+
 );
 
+watch([() => props.frets], () => {
+  fretsShape = fret_lines(frets, height.value, width.value)
+  strings.value = getStrings()
+})
+
 onMounted(() => {
-  fretsShape.value = fret_lines(frets, height.value, width.value)
+  fretsShape = fret_lines(frets, height.value, width.value)
   polys.value = inlay_polys()
   strings.value = getStrings()
 })
@@ -212,7 +219,7 @@ function getStrings(): StringInfo[] {
         hidden.push(note)
       }
     }
-    
+
     return {
       nr: string,
       y: string * string_spacing,

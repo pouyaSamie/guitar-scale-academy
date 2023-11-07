@@ -47,7 +47,6 @@ export interface ScaleInfoDefinition {
 
 export interface FretBoardSetting {
   notation: string
-  frets: number
   ShowMusicSheet: string
   ShowChords: string
 }

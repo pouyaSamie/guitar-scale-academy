@@ -72,10 +72,6 @@
                   </template>
                 </v-slider>
               </v-list-item>
-
-              <v-list-item>
-                <v-switch color="purple" label="Enable hints"></v-switch>
-              </v-list-item>
             </v-list>
           </v-card>
         </v-menu>
@@ -92,14 +88,14 @@ import type { PropType } from 'vue'
 let userTuning = ref<string>('E A D G B E')
 let userTonic = ref<string>('C')
 let menu = ref<boolean>(false)
-let FretSettings = ref<number>(12)
+let FretSettings = ref<number>(18)
 
 const props = defineProps({
   tuning: {
     type: Array<TuningItems>
   },
   notation: { type: String, default: () => 'Sharp' },
-  frets: { type: Number, default: () => 12 },
+  frets: { type: Number, default: () => 18 },
   scale: { type: Array as PropType<ScaleNames[]>, default: () => {} },
   tonics: { type: Array<string>, default: [] }
 })
@@ -110,6 +106,7 @@ const emit = defineEmits<{
   onUserScaleChange: [value: ScaleInfoDefinition]
   onUserTuningChange: [value: string]
   onUserTonicChange: [value: ScaleInfoDefinition]
+  onFretNumberChange: [value: number]
 }>()
 
 watch(userScale, (newValue: ScaleNames) => {
@@ -122,5 +119,9 @@ watch(userTuning, (newValue) => {
 
 watch(userTonic, (newValue: string) => {
   emit('onUserTonicChange', { tonic: newValue, type: userScale.value.name } as ScaleInfoDefinition)
+})
+
+watch(FretSettings, (newValue: number) => {
+  emit('onFretNumberChange', newValue)
 })
 </script>

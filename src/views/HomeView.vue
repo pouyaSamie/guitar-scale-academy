@@ -2,11 +2,7 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12">
-        <FretboardContainer
-          v-for="item in fretBoardItem"
-          :key="item"
-          @on-add-fret-board="AddFretBoard"
-        />
+        <FretboardContainer v-for="item in fretBoardItem" :key="item" />
       </v-col>
     </v-row>
   </v-container>
@@ -16,8 +12,4 @@
 import FretboardContainer from '@/components/FretBoard/FretboardContainer.vue'
 import { ref } from 'vue'
 let fretBoardItem = ref<number>(1)
-
-function AddFretBoard() {
-  fretBoardItem.value++
-}
 </script>

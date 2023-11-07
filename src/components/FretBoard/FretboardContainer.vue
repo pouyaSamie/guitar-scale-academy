@@ -5,6 +5,7 @@
         @on-user-scale-change="ScaleChanged"
         @on-user-tonic-change="TonicChanged"
         @on-user-tuning-change="TuningChanged"
+        @on-fret-number-change="FretNumberChanged"
         :scale="ALL_SCALES"
         :tuning="Tunings[0].tunings"
         :tonics="Tonics"
@@ -25,7 +26,7 @@
       <FretBoard
         :tuning="tuning"
         :notation="settings.notation"
-        :frets="settings.frets"
+        :frets="frets"
         :scale-tonic="scaleInfo.tonic"
         :scale-mode="scaleInfo.type"
       />
@@ -50,11 +51,11 @@ for (var scaleType of ScaleType.all()) {
 const scaleInfo = ref<ScaleInfoDefinition>({ tonic: 'C', type: 'major' })
 const settings = ref<FretBoardSetting>({
   notation: 'sharps',
-  frets: 18,
   ShowMusicSheet: 'false',
   ShowChords: 'true'
 })
 
+let frets = ref<number>(18)
 let usrTuning = ref(localStorage.getItem('tuning') || 'E A D G B E')
 const tuning = computed(() => {
   let tune = usrTuning.value.trim().split(' ').map(Note.chroma).reverse()
@@ -71,6 +72,10 @@ function TonicChanged(scale: ScaleInfoDefinition): void {
 
 function TuningChanged(tuning: string): void {
   usrTuning.value = tuning
+}
+
+function FretNumberChanged(fretNumber: number): void {
+  frets.value = fretNumber
 }
 </script>
 

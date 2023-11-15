@@ -170,7 +170,8 @@ let root = ref<number>(-1)
 let string_spacing: number = 42
 let inlays = ref<number[]>([3, 5, 7, 9, 12, 15, 17, 19, 21])
 
-const width = computed(() => fretpos(frets - 1))
+const FretCount = ref<number>(props.frets)
+const width = computed(() => fretpos(FretCount.value - 1))
 const height = computed(() => {
   let tunningLength = 6
   if (props.tuning.length > 0) tunningLength = props.tuning.length
@@ -187,7 +188,8 @@ watch(
 );
 
 watch([() => props.frets], () => {
-  fretsShape = fret_lines(frets, height.value, width.value)
+  FretCount.value = props.frets
+  fretsShape = fret_lines(FretCount.value, height.value, width.value)
   strings.value = getStrings()
 })
 
@@ -209,7 +211,7 @@ function getStrings(): StringInfo[] {
     const visible: NoteDefinition[] = []
     const hidden: NoteDefinition[] = []
 
-    for (let fret = 0; fret < frets; fret++) {
+    for (let fret = 0; fret < FretCount.value; fret++) {
       const num: number = (tuning + fret) % 12
       const note: NoteDefinition = createNote(num, fret, string, notation, scale)
 

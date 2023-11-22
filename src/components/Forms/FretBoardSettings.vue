@@ -55,7 +55,7 @@
                 <v-slider
                   v-model="FretSettings"
                   :min="4"
-                  :max="24"
+                  :max="22"
                   label="Frets"
                   hide-details
                   :step="1"

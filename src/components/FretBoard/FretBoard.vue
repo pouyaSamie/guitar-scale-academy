@@ -4,16 +4,8 @@
     <text font-size="11" x="10" y="20" fill="black">TODO: Tuning: E A D G</text>
     -->
 
-    <g transform="translate(80, 50)">
+    <g transform="translate(80, 60)">
       :x="width" :y="height + 20"
-
-      <!-- fret inlays -->
-      <polygon
-        v-for="inlay in polys"
-        :key="'inlay_' + inlay.fret"
-        :points="inlay.points"
-        style="fill: rgb(38 38 38)"
-      />
 
       <!-- string lines -->
       <line
@@ -49,20 +41,29 @@
         :y2="fretsShape?.y2"
         :stroke="StokeColor"
       />
+      <g v-for="(fret, index) in fretsShape?.lines" :key="'f' + index">
+        <!-- circle -->
+        <circle
+          dominant-baseline="central"
+          :cx="(fretpos(fret.nr - 1) + fretpos(fret.nr)) / 2"
+          :cy="fretsShape?.y1 - 40"
+          r="14"
+          :fill="inlays.includes(index + 1) ? 'white' : 'transparent'"
+        />
 
-      <text
-        v-for="(fret, index) in fretsShape?.lines"
-        font-size="14"
-        :key="'fret_' + fret.nr"
-        :x="(fretpos(fret.nr - 1) + fretpos(fret.nr) - 20) / 2"
-        :y="fretsShape?.y1 - 45"
-        dominant-baseline="hanging"
-        fill="white"
-        font-weight="bold"
-      >
-        {{ index + 1 }}
-      </text>
-
+        <text
+          font-size="14"
+          :key="'fret_' + fret.nr"
+          :x="(fretpos(fret.nr - 1) + fretpos(fret.nr)) / 2"
+          :y="fretsShape?.y1 - 40"
+          dominant-baseline="central"
+          :fill="inlays.includes(index + 1) ? 'black' : 'white'"
+          font-weight="bold"
+          text-anchor="middle"
+        >
+          {{ index + 1 }}
+        </text>
+      </g>
       <!-- notes -->
       <g v-for="string in strings" :key="'ng_' + string.nr">
         <!-- hidden notes -->
@@ -109,6 +110,7 @@
             <circle
               :cx="note.x"
               :cy="string.y"
+              dominant-baseline="central"
               r="13"
               :stroke-dasharray="hover_note == note.num && note.num != root ? '4,4' : '0'"
               :fill="root == note.num ? 'red' : '#0165E7'"
@@ -143,7 +145,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch, type PropType, reactive } from 'vue'
-import type { StringInfo, FretLine, Poly, NoteDefinition } from './FretBoard.types'
+import type { StringInfo, FretLine, NoteDefinition } from './FretBoard.types'
 import { computed } from 'vue'
 import { createNote, fret_lines, fretpos, normalize, StokeColor, toname } from './FretBoard'
 import { Note, Scale } from 'tonal'
@@ -160,17 +162,14 @@ const props = defineProps({
 })
 
 let { frets, notation } = props
-
 let hover_note = ref<number>(-1)
 let strings = ref<StringInfo[]>([])
 let fretsShape = reactive<FretLine>({ y1: 0, y2: 0, lines: [] })
-let polys = ref<Poly[]>([])
 let root = ref<number>(-1)
-
-let string_spacing: number = 42
-let inlays = ref<number[]>([3, 5, 7, 9, 12, 15, 17, 19, 21])
-
 const FretCount = ref<number>(props.frets)
+let string_spacing: number = 42
+let inlays: number[] = [3, 5, 7, 9, 12, 15, 17, 19, 21]
+
 const width = computed(() => fretpos(FretCount.value - 1))
 const height = computed(() => {
   let tunningLength = 6
@@ -195,7 +194,6 @@ watch([() => props.frets], () => {
 
 onMounted(() => {
   fretsShape = fret_lines(frets, height.value, width.value)
-  polys.value = inlay_polys()
   strings.value = getStrings()
 })
 
@@ -231,62 +229,12 @@ function getStrings(): StringInfo[] {
     }
   })
 }
-
-function inlay_polys(): Poly[] {
-  let result: Poly[] = []
-  if (!props.tuning.length) return result
-  for (let fret of inlays.value) {
-    if (fret >= frets) break
-
-    const resize_x = 0.6
-    const resize_y = fret == 12 ? 0.8 : 0.6
-
-    let hgt = height.value
-    let top = hgt / 2 - (hgt * resize_y) / 2
-    if (hgt < 10) {
-      hgt = 10
-      top = -5
-    }
-    const bottom = top + hgt * resize_y
-    const left = fretpos(fret - 1)
-    const right = fretpos(fret)
-    const width = right - left
-
-    const nleft = left + width / 2 - (width * resize_x) / 2
-    const nright = nleft + width * resize_x
-
-    let points
-    if (fret == 12) {
-      points = [
-        [nleft, top],
-        [nright, top],
-        [nright, bottom],
-        [nleft, bottom]
-      ]
-    } else {
-      points = [
-        [left + width / 2, top],
-        [nleft, hgt / 2],
-        [left + width / 2, bottom],
-        [nright, hgt / 2]
-      ]
-    }
-
-    let pointsstr = ''
-    for (let point of points) {
-      pointsstr += point[0].toString() + ',' + point[1].toString() + ' '
-    }
-
-    result.push({
-      fret: fret,
-      points: pointsstr
-    })
-  }
-  return result
-}
 </script>
 
 <style scoped>
+.test {
+  background-color: red;
+}
 .list-enter-active,
 .list-leave-active {
   transition: all 0.4s ease;

@@ -1,9 +1,9 @@
 import { Midi } from 'tonal'
-import type { Scale } from "@tonaljs/scale";
-import type { Fret, FretLine, NoteDefinition, } from './FretBoard.types'
+import type { Scale } from '@tonaljs/scale'
+import type { Fret, FretLine, NoteDefinition } from './FretBoard.types'
 
 export function fretpos(fretNumber: number): number {
-  const baseScale = 1300
+  const baseScale = 2000
 
   if (fretNumber <= 20) {
     const scaleFactor = Math.pow(2, fretNumber / 12)

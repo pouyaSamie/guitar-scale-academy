@@ -19,10 +19,10 @@ export interface Fret {
   x: number
 }
 
-export interface Poly {
-  fret: number
-  points: string
-}
+// export interface Poly {
+//   fret: number
+//   points: string
+// }
 
 export interface FretLine {
   y1: number

@@ -6,20 +6,12 @@
         @on-user-tonic-change="TonicChanged"
         @on-user-tuning-change="TuningChanged"
         @on-fret-number-change="FretNumberChanged"
+        @on-user-notation-change="NotationChanged"
         :scale="ALL_SCALES"
         :tuning="Tunings[0].tunings"
         :tonics="Tonics"
       />
     </v-col>
-    <!-- <v-col class="d-flex justify-start" cols="1">
-      <v-icon
-        class="mt-3"
-        @click="AddFretBoard"
-        color="success"
-        size="large"
-        icon="mdi-plus-box"
-      ></v-icon>
-    </v-col> -->
   </v-row>
   <v-row dense justify="center">
     <v-col cols="12" class="d-flex justify-center">
@@ -42,7 +34,12 @@ import FretBoardSettings from '@/components/Forms/FretBoardSettings.vue'
 import { Tunings } from './Tunings'
 import { Tonics } from './Tonics'
 import { Note, ScaleType } from 'tonal'
-import { type FretBoardSetting, type ScaleInfoDefinition, type ScaleNames } from './FretBoard.types'
+import {
+  NotationType,
+  type FretBoardSetting,
+  type ScaleInfoDefinition,
+  type ScaleNames
+} from './FretBoard.types'
 
 var ALL_SCALES: ScaleNames[] = []
 for (var scaleType of ScaleType.all()) {
@@ -50,7 +47,7 @@ for (var scaleType of ScaleType.all()) {
 }
 const scaleInfo = ref<ScaleInfoDefinition>({ tonic: 'C', type: 'major' })
 const settings = ref<FretBoardSetting>({
-  notation: 'sharps',
+  notation: NotationType.Sharp,
   ShowMusicSheet: 'false',
   ShowChords: 'true'
 })
@@ -76,6 +73,10 @@ function TuningChanged(tuning: string): void {
 
 function FretNumberChanged(fretNumber: number): void {
   frets.value = fretNumber
+}
+
+function NotationChanged(notationType: NotationType): void {
+  settings.value.notation = notationType
 }
 </script>
 

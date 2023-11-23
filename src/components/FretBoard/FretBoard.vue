@@ -232,9 +232,6 @@ function getStrings(): StringInfo[] {
 </script>
 
 <style scoped>
-.test {
-  background-color: red;
-}
 .list-enter-active,
 .list-leave-active {
   transition: all 0.4s ease;

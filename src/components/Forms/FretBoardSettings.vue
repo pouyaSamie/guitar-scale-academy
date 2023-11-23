@@ -71,6 +71,18 @@
                     ></v-text-field>
                   </template>
                 </v-slider>
+
+                <v-btn-toggle density="compact" v-model="userNotation" color="primary" mandatory>
+                  <v-btn value="Sharp"
+                    ><v-icon class="pr-2">mdi-music-accidental-sharp</v-icon>Sharp</v-btn
+                  >
+                  <v-btn value="flat"
+                    ><v-icon class="pr-2">mdi-music-accidental-flat</v-icon>flat</v-btn
+                  >
+                  <v-btn value="Intervals"
+                    ><v-icon class="pr-2">mdi-music-note-quarter</v-icon>Intervals</v-btn
+                  >
+                </v-btn-toggle>
               </v-list-item>
             </v-list>
           </v-card>
@@ -82,7 +94,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { ScaleInfoDefinition, ScaleNames, TuningItems } from '../FretBoard/FretBoard.types'
+import { NotationType, type ScaleInfoDefinition, type ScaleNames, type TuningItems } from '../FretBoard/FretBoard.types'
 import type { PropType } from 'vue'
 
 let userTuning = ref<string>('E A D G B E')
@@ -94,19 +106,19 @@ const props = defineProps({
   tuning: {
     type: Array<TuningItems>
   },
-  notation: { type: String, default: () => 'Sharp' },
   frets: { type: Number, default: () => 18 },
   scale: { type: Array as PropType<ScaleNames[]>, default: () => {} },
   tonics: { type: Array<string>, default: [] }
 })
-
+let userNotation = ref<NotationType>(NotationType.Sharp)
 let userScale = ref<ScaleNames>({ name: 'major' } as ScaleNames)
 
 const emit = defineEmits<{
   onUserScaleChange: [value: ScaleInfoDefinition]
   onUserTuningChange: [value: string]
   onUserTonicChange: [value: ScaleInfoDefinition]
-  onFretNumberChange: [value: number]
+  onFretNumberChange: [value: number],
+   onUserNotationChange: [value: NotationType]
 }>()
 
 watch(userScale, (newValue: ScaleNames) => {
@@ -123,5 +135,9 @@ watch(userTonic, (newValue: string) => {
 
 watch(FretSettings, (newValue: number) => {
   emit('onFretNumberChange', newValue)
+})
+
+watch(userNotation, (newValue: NotationType) => {
+  emit('onUserNotationChange', newValue)
 })
 </script>

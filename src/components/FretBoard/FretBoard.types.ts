@@ -56,3 +56,9 @@ export interface ScaleNames {
   name: string
   aliases: string[]
 }
+
+export enum NotationType{
+  Flat='flat',
+  Sharp='sharp',
+  Intervals='intervals'
+}

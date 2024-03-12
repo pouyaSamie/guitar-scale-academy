@@ -11,6 +11,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: 'pouyasamie.github.io/guitar-scale-academy/dist/'
+  server: {origin: "https://pouyasamie.github.io/guitar-scale-academy/dist"}
 
 })

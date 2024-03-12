@@ -12,7 +12,7 @@ export default defineConfig({
     }
   },
   base: process.env.NODE_ENV === 'production'
-    ? '/production-sub-path/'
+    ? 'https://pouyasamie.github.io/guitar-scale-academy/dist/'
     : '/'
 
 })
